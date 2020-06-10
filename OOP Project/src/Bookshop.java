@@ -12,19 +12,31 @@ public class Bookshop {
 		boolean k=true;
 		while(k) {
 			k=false;
-			try {
-						
+			try {				
 				    System.out.println("Enter username:");
 				    userName=myObj.nextLine(); 
 				    System.out.println("Enter password:");
 				    password=myObj.nextLine();
 				    Class.forName("com.mysql.jdbc.Driver");
-				    con=DriverManager.getConnection("jdbc:mysql://localhost:3306",userName,password);
+				    con=DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/bookshop",userName,password);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 				k=true;
 			}
+		}
+		booklist current=new booklist();
+		Statement stmt;
+		try {
+			stmt = con.createStatement();				
+			ResultSet rs=stmt.executeQuery("SELECT * FROM `admin` WHERE `number`>0");
+		while(rs.next())
+		{
+		    Book re= new Book(rs.getString(4),rs.getString(5),rs.getInt(3),rs.getInt(1),rs.getFloat(2));
+		    current.add(re);
+		}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		Customer You=new Customer(userName);
 		int DO=1;
@@ -36,44 +48,19 @@ public class Bookshop {
 				System.out.println("Enter 0 to close all:");
 			}
 			if(DO==2) {
-				Statement stmt;
-				try {
-					stmt = con.createStatement();				
-					ResultSet rs=stmt.executeQuery("select * from admin where number>0");
-				while(rs.next())
-				System.out.println("name:"+rs.getString(5)+"Author:"+rs.getString(4)+"number:"+rs.getInt(3)+"id:"+rs.getInt(1)+"price:"+rs.getFloat(2));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-
+				current.showall();
 				System.out.println("Enter 1 to return back to menu:");
 			}
 			if(DO==3) {
 				System.out.println("Enter product id:");
 				int id=myObj.nextInt();
-				Statement stmt;
-				try {
-					stmt = con.createStatement();				
-					ResultSet rs=stmt.executeQuery("select * from admin where id="+id);
-				    Book re= new Book(rs.getString(5),rs.getString(4),rs.getInt(3),rs.getInt(1),rs.getFloat(2));
-				    You.Add(re);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+				current.buy(You, id);
 				System.out.println("Enter 1 to return back to menu:");
 			}
 			if (DO==4) {
 				System.out.println("Enter product id:");
 				int id=myObj.nextInt();
-				Statement stmt;
-				try {
-					stmt = con.createStatement();				
-					ResultSet rs=stmt.executeQuery("select * from admin where id="+id);
-					System.out.println("name:"+rs.getString(5)+"Author:"+rs.getString(4)+"number:"+rs.getInt(3)+"id:"+rs.getInt(1)+"price:"+rs.getFloat(2));
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				System.out.println("Enter 1 to return back to menu:");
+				current.get(id);
 			}
 			DO=myObj.nextInt();
 		}

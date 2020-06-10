@@ -17,4 +17,13 @@ void setNumber(int x) {
 void setId(int x) {
 	this.id=x;
 }
+float getPrice() {
+	return this.price;
+}
+int getNumber() {
+	return this.number;
+}
+int getId() {
+	return this.id;
+}
 }
